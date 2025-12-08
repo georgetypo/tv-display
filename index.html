@@ -2,13 +2,12 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Retool Video Test</title>
+    <title>Video Loop Fix</title>
     <style>
       html, body {
         margin: 0;
         height: 100%;
         background: black;
-        overflow: hidden;
       }
       video {
         width: 100%;
@@ -18,30 +17,30 @@
     </style>
   </head>
   <body>
-    <video
-      id="vid"
-      src="https://recipedash.retool.com/api/file/a15bb8d0-1d05-4ded-80df-843f84ae90bf"
-      autoplay
-      muted
-      playsinline
-      preload="auto"
-    >
-      Your browser does not support HTML5 video.
-    </video>
+
+    <video id="vid" autoplay muted playsinline></video>
 
     <script>
-      const v = document.getElementById("vid");
+      async function loadVideo() {
+        const videoUrl = "https://recipedash.retool.com/api/file/a15bb8d0-1d05-4ded-80df-843f84ae90bf";
+        const response = await fetch(videoUrl);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
 
-      // Samsung TV fallback — manually loop
-      v.addEventListener("ended", function () {
-        v.currentTime = 0;
+        const v = document.getElementById("vid");
+        v.src = blobUrl;
+        v.loop = true;
+
+        v.addEventListener("ended", () => {
+          v.currentTime = 0;
+          v.play();
+        });
+
         v.play();
-      });
+      }
 
-      // Extra fallback: force play attempt every 2 seconds
-      setInterval(() => {
-        if (v.paused) v.play();
-      }, 2000);
+      loadVideo();
     </script>
+
   </body>
 </html>
