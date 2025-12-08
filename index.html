@@ -1,57 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Retool Video Test</title>
+  <title>iMenuPro Embed Test</title>
   <style>
     html, body {
       margin: 0;
       height: 100%;
-      background: black;
       overflow: hidden;
+      cursor: pointer;
     }
-    video {
+    #menu-container {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      overflow: hidden;
     }
   </style>
 </head>
 <body>
+  <div id="menu-container"></div>
 
-<video id="video" autoplay muted playsinline preload="auto">
-  <source src="https://recipedash.retool.com/api/file/a15bb8d0-1d05-4ded-80df-843f84ae90bf" type="video/mp4">
-  Your browser does not support HTML5 video.
-</video>
+  <script>
+    function loadEmbed() {
+      const container = document.getElementById("menu-container");
+      if (!container) return;
 
-<script>
-  const video = document.getElementById('video');
+      // Clear previous content
+      container.innerHTML = "";
 
-  // Attempt normal loop
-  video.addEventListener('ended', () => {
-    video.currentTime = 0;
-    video.play();
-  });
+      // Create new script
+      const script = document.createElement("script");
+      script.id = "unz-42-z";
+      script.type = "text/javascript";
+      script.src = "https://imenupro.com/!unz-42-z";
 
-  // Fallback: detect frozen video
-  let lastTime = 0;
-  let stuckCount = 0;
+      container.appendChild(script);
 
-  setInterval(() => {
-    const currentTime = video.currentTime;
-    if (currentTime === lastTime) {
-      stuckCount++;
-      if (stuckCount >= 2) { // stuck for 2 checks
-        video.currentTime = 0;
-        video.play();
-        stuckCount = 0;
+      // Remove top/bottom margin after script loads
+      function removeMargin() {
+        const img = document.querySelector("#wrapper-unz-42-z > div:nth-child(1) > img");
+        if (img) {
+          img.style.marginTop = "0";
+          img.style.marginBottom = "0";
+        } else {
+          setTimeout(removeMargin, 50);
+        }
       }
-    } else {
-      stuckCount = 0;
-    }
-    lastTime = currentTime;
-  }, 1000);
-</script>
 
+      removeMargin();
+    }
+
+    // Load on page load
+    window.onload = loadEmbed;
+
+    // Reload embed on click
+    document.getElementById("menu-container").onclick = loadEmbed;
+  </script>
 </body>
 </html>
