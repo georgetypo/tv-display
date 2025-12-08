@@ -19,14 +19,29 @@
   </head>
   <body>
     <video
+      id="vid"
       src="https://recipedash.retool.com/api/file/a15bb8d0-1d05-4ded-80df-843f84ae90bf"
       autoplay
-      loop
       muted
       playsinline
       preload="auto"
     >
       Your browser does not support HTML5 video.
     </video>
+
+    <script>
+      const v = document.getElementById("vid");
+
+      // Samsung TV fallback — manually loop
+      v.addEventListener("ended", function () {
+        v.currentTime = 0;
+        v.play();
+      });
+
+      // Extra fallback: force play attempt every 2 seconds
+      setInterval(() => {
+        if (v.paused) v.play();
+      }, 2000);
+    </script>
   </body>
 </html>
