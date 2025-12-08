@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Video Loop Fix</title>
-    <style>
-      html, body {
-        margin: 0;
-        height: 100%;
-        background: black;
+<head>
+  <meta charset="UTF-8">
+  <title>Retool Video Test</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+
+<video id="video" autoplay muted playsinline preload="auto">
+  <source src="https://recipedash.retool.com/api/file/a15bb8d0-1d05-4ded-80df-843f84ae90bf" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
+
+<script>
+  const video = document.getElementById('video');
+
+  // Attempt normal loop
+  video.addEventListener('ended', () => {
+    video.currentTime = 0;
+    video.play();
+  });
+
+  // Fallback: detect frozen video
+  let lastTime = 0;
+  let stuckCount = 0;
+
+  setInterval(() => {
+    const currentTime = video.currentTime;
+    if (currentTime === lastTime) {
+      stuckCount++;
+      if (stuckCount >= 2) { // stuck for 2 checks
+        video.currentTime = 0;
+        video.play();
+        stuckCount = 0;
       }
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    </style>
-  </head>
-  <body>
+    } else {
+      stuckCount = 0;
+    }
+    lastTime = currentTime;
+  }, 1000);
+</script>
 
-    <video id="vid" autoplay muted playsinline></video>
-
-    <script>
-      async function loadVideo() {
-        const videoUrl = "https://recipedash.retool.com/api/file/a15bb8d0-1d05-4ded-80df-843f84ae90bf";
-        const response = await fetch(videoUrl);
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-
-        const v = document.getElementById("vid");
-        v.src = blobUrl;
-        v.loop = true;
-
-        v.addEventListener("ended", () => {
-          v.currentTime = 0;
-          v.play();
-        });
-
-        v.play();
-      }
-
-      loadVideo();
-    </script>
-
-  </body>
+</body>
 </html>
